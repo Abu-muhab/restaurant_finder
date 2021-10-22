@@ -8,6 +8,7 @@ class Restaurant {
   double? rating;
   String? vicinity;
   LatLng? location;
+  int totalUserRating;
 
   Restaurant(
       {this.isOpen,
@@ -16,7 +17,8 @@ class Restaurant {
       this.placeId,
       this.rating,
       this.vicinity,
-      this.location});
+      this.location,
+      this.totalUserRating = 0});
 
   factory Restaurant.fromJson(Map json) {
     return Restaurant(
@@ -33,6 +35,9 @@ class Restaurant {
         rating: json['rating'] == null
             ? 0
             : double.parse(json['rating'].toString()),
-        vicinity: json['vicinity']);
+        vicinity: json['vicinity'],
+        totalUserRating: json['user_ratings_total'] == null
+            ? 0
+            : json['user_ratings_total']);
   }
 }

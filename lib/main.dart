@@ -7,10 +7,10 @@ import 'package:restaurantfinder/screens/index.dart';
 import 'package:restaurantfinder/screens/landing.dart';
 import 'package:restaurantfinder/screens/login.dart';
 import 'package:restaurantfinder/screens/nearby.dart';
+import 'package:restaurantfinder/screens/restaurant_details.dart';
 import 'package:restaurantfinder/screens/signup.dart';
 
 void main() async {
-  // Provider.debugCheckInvalidValueType = null;
   runApp(MultiProvider(
     providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
     child: MyApp(),
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
           "/landing": (context) => LandingScreen(),
           "/login": (context) => LoginScreen(),
           "/signup": (context) => SignupScreen(),
+          "/restaurant_details": (context) => RestaurantDetailsScreen(),
           "/": (context) => IndexScreen()
         },
         initialRoute: "/");

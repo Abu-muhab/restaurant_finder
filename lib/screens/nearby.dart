@@ -294,7 +294,8 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                           ))
                                         : RefreshIndicator(
                                             onRefresh: () async {
-                                              await fetchRestaurants(isRefresh: true);
+                                              await fetchRestaurants(
+                                                  isRefresh: true);
                                             },
                                             child: ListView.builder(
                                                 controller: scrollController,
@@ -302,46 +303,58 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                                     AlwaysScrollableScrollPhysics(),
                                                 itemCount: restaurants!.length,
                                                 itemBuilder: (context, count) {
-                                                  return Column(
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      RestaurantTile(
-                                                        restaurant:
-                                                            restaurants![count],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Divider(
-                                                        color: Colors
-                                                            .blueGrey[800],
-                                                      ),
-                                                      fetchingNextPage ==
-                                                                  true &&
-                                                              count ==
-                                                                  (restaurants!
-                                                                          .length -
-                                                                      1)
-                                                          ? Container(
-                                                              height: 40,
-                                                              child: Center(
-                                                                child: SizedBox(
-                                                                  height: 25,
-                                                                  width: 25,
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          "/restaurant_details",
+                                                          arguments:
+                                                              restaurants![
+                                                                  count]);
+                                                    },
+                                                    child: Column(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        RestaurantTile(
+                                                          restaurant:
+                                                              restaurants![
+                                                                  count],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Divider(
+                                                          color: Colors
+                                                              .blueGrey[800],
+                                                        ),
+                                                        fetchingNextPage ==
+                                                                    true &&
+                                                                count ==
+                                                                    (restaurants!
+                                                                            .length -
+                                                                        1)
+                                                            ? Container(
+                                                                height: 40,
+                                                                child: Center(
                                                                   child:
-                                                                      CircularProgressIndicator(
-                                                                    valueColor: AlwaysStoppedAnimation<
-                                                                            Color>(
-                                                                        Colors
-                                                                            .blueAccent),
+                                                                      SizedBox(
+                                                                    height: 25,
+                                                                    width: 25,
+                                                                    child:
+                                                                        CircularProgressIndicator(
+                                                                      valueColor: AlwaysStoppedAnimation<
+                                                                              Color>(
+                                                                          Colors
+                                                                              .blueAccent),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            )
-                                                          : Container()
-                                                    ],
+                                                              )
+                                                            : Container()
+                                                      ],
+                                                    ),
                                                   );
                                                 }),
                                           ))
