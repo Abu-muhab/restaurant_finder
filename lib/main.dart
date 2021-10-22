@@ -6,6 +6,7 @@ import 'package:restaurantfinder/providers/auth_provider.dart';
 import 'package:restaurantfinder/screens/index.dart';
 import 'package:restaurantfinder/screens/landing.dart';
 import 'package:restaurantfinder/screens/login.dart';
+import 'package:restaurantfinder/screens/nearby.dart';
 import 'package:restaurantfinder/screens/signup.dart';
 
 void main() async {
@@ -22,14 +23,15 @@ class MyApp extends StatelessWidget {
     Firebase.initializeApp();
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Nearby Restaurants',
         theme: Theme.of(context).copyWith(primaryColor: kPrimaryColor),
         routes: {
+          "/nearby": (context)=> NearbyScreen(),
           "/landing": (context) => LandingScreen(),
           "/login": (context) => LoginScreen(),
           "/signup": (context) => SignupScreen(),
           "/": (context) => IndexScreen()
         },
-        initialRoute: "/");
+        initialRoute: "/nearby");
   }
 }
