@@ -13,9 +13,6 @@ class PlaceApi {
     try {
       http.Response response = await http.get(Uri.parse(baseUrl +
           "/details/json?place_id=$placeId&key=$apiKey&fields=photos,reviews"));
-
-      print(response.body);
-
       if (response.statusCode == 200) {
         Map result = JsonDecoder().convert(response.body)['result'];
         return RestaurantDetails.fromJson(result);

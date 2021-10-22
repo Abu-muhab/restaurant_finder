@@ -7,6 +7,7 @@ import 'package:restaurantfinder/api/place_api.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/models/restaurant.dart';
 import 'package:restaurantfinder/widgets/progress_button.dart';
+import 'package:restaurantfinder/widgets/star_rating.dart';
 
 class RestaurantDetailsScreen extends StatefulWidget {
   @override
@@ -19,12 +20,12 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
   late LatLng initialCameraPosition;
   late Restaurant restaurant;
 
-  bool fetchingDetails = false;
+  bool? fetchingDetails;
   RestaurantDetails? details;
 
   Future<void> fetchRestaurantDetails() async {
     try {
-      if (fetchingDetails == true) {
+      if (fetchingDetails == true || this.details != null) {
         return;
       }
       setState(() {
@@ -146,7 +147,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                         height: 10,
                       ),
                       Text.rich(TextSpan(
-                          text: restaurant!.totalUserRating.toString(),
+                          text: restaurant.totalUserRating.toString(),
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w500,
@@ -171,7 +172,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                                     fontWeight: FontWeight.w500,
                                     fontSize: 13)),
                             TextSpan(
-                                text: "${restaurant!.rating.toString()}  ",
+                                text: "${restaurant.rating.toString()}  ",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
@@ -181,169 +182,221 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                         height: 10,
                       ),
                       Divider(),
-                      details == null && fetchingDetails == false
-                          ? Expanded(
-                              child: Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SvgPicture.asset(
-                                    "images/error.svg",
-                                    height: MediaQuery.of(context).size.height *
-                                        0.2,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 30,
-                                        right: 30,
-                                        bottom: 20,
-                                        top: 20),
-                                    child: Text(
-                                      "Error fetching restaurant details. Try again",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                          color: Colors.white),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  ProgressButton(
-                                    height: 50,
-                                    width: 200,
-                                    text: "Reload",
-                                    onTap: () async {
-                                      await fetchRestaurantDetails();
-                                    },
-                                  )
-                                ],
-                              ),
-                            ))
-                          : details == null && fetchingDetails == true
+                      fetchingDetails == null
+                          ? Container()
+                          : details == null && fetchingDetails == false
                               ? Expanded(
                                   child: Center(
-                                      child: SizedBox(
-                                  height: 25,
-                                  width: 25,
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.blueAccent),
-                                    strokeWidth: 3,
-                                  ),
-                                )))
-                              : Expanded(
                                   child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 140,
-                                      child: details!.photoReferences.length ==
-                                              0
-                                          ? Center(
-                                              child: Text(
-                                                "No photos",
-                                                style: TextStyle(
-                                                    color: Colors.blueGrey),
-                                              ),
-                                            )
-                                          : ListView.builder(
-                                              physics: BouncingScrollPhysics(),
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder: (context, count) {
-                                                return Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 140,
-                                                      width: 140,
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          imageUrl: PlaceApi
-                                                              .getImageUrlFromReference(
-                                                                  details!.photoReferences[
-                                                                      count]),
-                                                          fit: BoxFit.cover,
-                                                          placeholder:
-                                                              (context, url) {
-                                                            return Container(
-                                                              color:
-                                                                  kPrimaryColorLight,
-                                                              height: 140,
-                                                              width: 140,
-                                                              child: Center(
-                                                                child: SizedBox(
-                                                                  height: 25,
-                                                                  width: 25,
-                                                                  child:
-                                                                      CircularProgressIndicator(
-                                                                    valueColor: AlwaysStoppedAnimation<
-                                                                            Color>(
-                                                                        Colors
-                                                                            .blueAccent),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                          errorWidget: (context,
-                                                              string, _) {
-                                                            return Container(
-                                                              color:
-                                                                  kPrimaryColorLight,
-                                                              height: 140,
-                                                              width: 140,
-                                                              child: Icon(
-                                                                Icons
-                                                                    .broken_image_outlined,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 10,
-                                                    )
-                                                  ],
-                                                );
-                                              },
-                                              itemCount: details!
-                                                  .photoReferences.length,
-                                            ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: SizedBox(
-                                        width: 300,
-                                        child: Text("Reviews",
-                                            style: TextStyle(
-                                                color: Color(0xffB0B0B0),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500)),
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      SvgPicture.asset(
+                                        "images/error.svg",
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.2,
                                       ),
-                                    ),
-                                    Expanded(child: Container()),
-                                    ProgressButton(
-                                      height: 56,
-                                      text: "Make reservation",
-                                      onTap: () async {},
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
-                                )),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 30,
+                                            right: 30,
+                                            bottom: 20,
+                                            top: 20),
+                                        child: Text(
+                                          "Error fetching restaurant details. Try again",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                              color: Colors.white),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      ProgressButton(
+                                        height: 50,
+                                        width: 200,
+                                        text: "Reload",
+                                        onTap: () async {
+                                          await fetchRestaurantDetails();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ))
+                              : details == null && fetchingDetails == true
+                                  ? Expanded(
+                                      child: Center(
+                                          child: SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                                Colors.blueAccent),
+                                        strokeWidth: 3,
+                                      ),
+                                    )))
+                                  : Expanded(
+                                      child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 140,
+                                          child: details!
+                                                      .photoReferences.length ==
+                                                  0
+                                              ? Center(
+                                                  child: Text(
+                                                    "No photos",
+                                                    style: TextStyle(
+                                                        color: Colors.blueGrey),
+                                                  ),
+                                                )
+                                              : ListView.builder(
+                                                  physics:
+                                                      BouncingScrollPhysics(),
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  itemBuilder:
+                                                      (context, count) {
+                                                    return Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          height: 140,
+                                                          width: 140,
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10),
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageUrl: PlaceApi
+                                                                  .getImageUrlFromReference(
+                                                                      details!.photoReferences[
+                                                                          count]),
+                                                              fit: BoxFit.cover,
+                                                              placeholder:
+                                                                  (context,
+                                                                      url) {
+                                                                return Container(
+                                                                  color:
+                                                                      kPrimaryColorLight,
+                                                                  height: 140,
+                                                                  width: 140,
+                                                                  child: Center(
+                                                                    child:
+                                                                        SizedBox(
+                                                                      height:
+                                                                          25,
+                                                                      width: 25,
+                                                                      child:
+                                                                          CircularProgressIndicator(
+                                                                        valueColor:
+                                                                            AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              errorWidget:
+                                                                  (context,
+                                                                      string,
+                                                                      _) {
+                                                                return Container(
+                                                                  color:
+                                                                      kPrimaryColorLight,
+                                                                  height: 140,
+                                                                  width: 140,
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .broken_image_outlined,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                  itemCount: details!
+                                                      .photoReferences.length,
+                                                ),
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        details!.reviews.length == 0
+                                            ? Container()
+                                            : Expanded(
+                                                child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("Reviews",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Color(0xffB0B0B0),
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500)),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  Expanded(
+                                                      child: ListView.builder(
+                                                    physics:
+                                                        BouncingScrollPhysics(),
+                                                    padding: EdgeInsets.zero,
+                                                    itemBuilder:
+                                                        (context, count) {
+                                                      return ListTile(
+                                                        title: Text(
+                                                          details!
+                                                              .reviews[count]
+                                                              .authorName,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                        subtitle: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              details!
+                                                                  .reviews[
+                                                                      count]
+                                                                  .review,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                            StarRating(
+                                                              rating: details!
+                                                                  .reviews[
+                                                                      count]
+                                                                  .rating,
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                    itemCount:
+                                                        details!.reviews.length,
+                                                  ))
+                                                ],
+                                              )),
+                                      ],
+                                    )),
                     ],
                   ),
                 ),
