@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurantfinder/api/place_api.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/models/restaurant.dart';
+import 'package:restaurantfinder/widgets/star_rating.dart';
 
 class RestaurantTile extends StatelessWidget {
   final Restaurant? restaurant;
@@ -68,35 +69,8 @@ class RestaurantTile extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
-              Wrap(
-                spacing: 3,
-                children: [
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                    size: 15,
-                  )
-                ],
+              StarRating(
+                rating: restaurant!.rating!,
               ),
               SizedBox(
                 height: 4,
