@@ -379,6 +379,8 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                                               restaurant:
                                                                   restaurants![
                                                                       count],
+                                                              userLocation:
+                                                                  userLocation,
                                                             ),
                                                             SizedBox(
                                                               height: 5,

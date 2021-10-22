@@ -1,13 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:restaurantfinder/api/place_api.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/models/restaurant.dart';
+import 'package:restaurantfinder/utils/util.dart';
 import 'package:restaurantfinder/widgets/star_rating.dart';
 
 class RestaurantTile extends StatelessWidget {
   final Restaurant? restaurant;
-  RestaurantTile({this.restaurant});
+  final LatLng? userLocation;
+  RestaurantTile({this.restaurant, this.userLocation});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,7 +95,7 @@ class RestaurantTile extends StatelessWidget {
                     width: 5,
                   ),
                   Text(
-                    "5 miles away",
+                    "${calculateDistance(userLocation!.latitude, userLocation!.longitude, restaurant!.location!.latitude, restaurant!.location!.longitude).ceil()} km away",
                     style: TextStyle(color: Colors.blueGrey),
                   )
                 ],
