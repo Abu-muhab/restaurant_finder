@@ -14,8 +14,6 @@ class NearbyScreen extends StatefulWidget {
   _NearbyScreenState createState() => _NearbyScreenState();
 }
 
-List<Restaurant>? savedRes;
-
 class _NearbyScreenState extends State<NearbyScreen> {
   List<Restaurant>? restaurants;
 
@@ -54,26 +52,23 @@ class _NearbyScreenState extends State<NearbyScreen> {
     super.initState();
   }
 
-  Future<void> fetchRestaurants() async {
-    if (savedRes != null) {
-      setState(() {
-        this.restaurants = savedRes;
-      });
-      return;
-    }
+  Future<void> fetchRestaurants({bool isRefresh = false}) async {
     try {
       if (fetching == true) {
         return;
       }
       setState(() {
         fetching = true;
+        if (isRefresh == true) {
+          this.restaurants = null;
+          nextPageToken = null;
+        }
       });
       NearbyRestaurantResponse response =
           await PlaceApi.getNearbyRestaurants(userLocation!);
       setState(() {
         this.restaurants = response.restaurants;
         nextPageToken = response.nextPageToken;
-        savedRes = this.restaurants;
         fetching = false;
       });
     } catch (err) {
@@ -98,7 +93,6 @@ class _NearbyScreenState extends State<NearbyScreen> {
       setState(() {
         this.restaurants!.addAll(response.restaurants);
         nextPageToken = response.nextPageToken;
-        savedRes = this.restaurants;
         fetchingNextPage = false;
       });
     } catch (err) {
@@ -298,53 +292,59 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                               strokeWidth: 3,
                                             ),
                                           ))
-                                        : ListView.builder(
-                                            controller: scrollController,
-                                            physics:
-                                                AlwaysScrollableScrollPhysics(),
-                                            itemCount: restaurants!.length,
-                                            itemBuilder: (context, count) {
-                                              return Column(
-                                                children: [
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  RestaurantTile(
-                                                    restaurant:
-                                                        restaurants![count],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 5,
-                                                  ),
-                                                  Divider(
-                                                    color: Colors.blueGrey[800],
-                                                  ),
-                                                  fetchingNextPage == true &&
-                                                          count ==
-                                                              (restaurants!
-                                                                      .length -
-                                                                  1)
-                                                      ? Container(
-                                                          height: 40,
-                                                          child: Center(
-                                                            child: SizedBox(
-                                                              height: 25,
-                                                              width: 25,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                valueColor:
-                                                                    AlwaysStoppedAnimation<
+                                        : RefreshIndicator(
+                                            onRefresh: () async {
+                                              await fetchRestaurants(isRefresh: true);
+                                            },
+                                            child: ListView.builder(
+                                                controller: scrollController,
+                                                physics:
+                                                    AlwaysScrollableScrollPhysics(),
+                                                itemCount: restaurants!.length,
+                                                itemBuilder: (context, count) {
+                                                  return Column(
+                                                    children: [
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      RestaurantTile(
+                                                        restaurant:
+                                                            restaurants![count],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      Divider(
+                                                        color: Colors
+                                                            .blueGrey[800],
+                                                      ),
+                                                      fetchingNextPage ==
+                                                                  true &&
+                                                              count ==
+                                                                  (restaurants!
+                                                                          .length -
+                                                                      1)
+                                                          ? Container(
+                                                              height: 40,
+                                                              child: Center(
+                                                                child: SizedBox(
+                                                                  height: 25,
+                                                                  width: 25,
+                                                                  child:
+                                                                      CircularProgressIndicator(
+                                                                    valueColor: AlwaysStoppedAnimation<
                                                                             Color>(
                                                                         Colors
                                                                             .blueAccent),
+                                                                  ),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : Container()
-                                                ],
-                                              );
-                                            }))
+                                                            )
+                                                          : Container()
+                                                    ],
+                                                  );
+                                                }),
+                                          ))
                           ],
                         ))
                 ],
