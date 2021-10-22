@@ -19,11 +19,17 @@ List<Restaurant>? savedRes;
 class _NearbyScreenState extends State<NearbyScreen> {
   List<Restaurant>? restaurants;
 
-  bool fetching = true;
+  bool fetching = false;
+  bool fetchingNextPage = false;
+
   bool? permissionGranted;
 
   Location location = new Location();
   LatLng? userLocation;
+
+  String? nextPageToken;
+
+  late ScrollController scrollController;
 
   @override
   void initState() {
@@ -37,6 +43,14 @@ class _NearbyScreenState extends State<NearbyScreen> {
         }
       });
     });
+    scrollController = ScrollController();
+    scrollController.addListener(() {
+      if ((scrollController.position.maxScrollExtent -
+              scrollController.position.pixels) <=
+          20) {
+        fetchNextPage();
+      }
+    });
     super.initState();
   }
 
@@ -48,20 +62,49 @@ class _NearbyScreenState extends State<NearbyScreen> {
       return;
     }
     try {
+      if (fetching == true) {
+        return;
+      }
       setState(() {
         fetching = true;
       });
-      List<Restaurant> restaurants =
+      NearbyRestaurantResponse response =
           await PlaceApi.getNearbyRestaurants(userLocation!);
       setState(() {
-        this.restaurants = restaurants;
-        savedRes = restaurants;
+        this.restaurants = response.restaurants;
+        nextPageToken = response.nextPageToken;
+        savedRes = this.restaurants;
         fetching = false;
       });
     } catch (err) {
       print(err.toString());
       setState(() {
         fetching = false;
+      });
+    }
+  }
+
+  Future<void> fetchNextPage() async {
+    if (nextPageToken == null ||
+        restaurants == null ||
+        fetchingNextPage == true) return;
+    try {
+      setState(() {
+        fetchingNextPage = true;
+      });
+      NearbyRestaurantResponse response = await PlaceApi.getNearbyRestaurants(
+          userLocation!,
+          pageToken: nextPageToken);
+      setState(() {
+        this.restaurants!.addAll(response.restaurants);
+        nextPageToken = response.nextPageToken;
+        savedRes = this.restaurants;
+        fetchingNextPage = false;
+      });
+    } catch (err) {
+      print(err.toString());
+      setState(() {
+        fetchingNextPage = false;
       });
     }
   }
@@ -255,23 +298,50 @@ class _NearbyScreenState extends State<NearbyScreen> {
                                               strokeWidth: 3,
                                             ),
                                           ))
-                                        :
-                                        // ListView(
-                                        //             padding: EdgeInsets.zero,
-                                        //             children: [RestaurantTile()],
-                                        //           ))
-                                        ListView.builder(
+                                        : ListView.builder(
+                                            controller: scrollController,
+                                            physics:
+                                                AlwaysScrollableScrollPhysics(),
                                             itemCount: restaurants!.length,
                                             itemBuilder: (context, count) {
                                               return Column(
                                                 children: [
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
                                                   RestaurantTile(
                                                     restaurant:
                                                         restaurants![count],
                                                   ),
                                                   SizedBox(
-                                                    height: 10,
-                                                  )
+                                                    height: 5,
+                                                  ),
+                                                  Divider(
+                                                    color: Colors.blueGrey[800],
+                                                  ),
+                                                  fetchingNextPage == true &&
+                                                          count ==
+                                                              (restaurants!
+                                                                      .length -
+                                                                  1)
+                                                      ? Container(
+                                                          height: 40,
+                                                          child: Center(
+                                                            child: SizedBox(
+                                                              height: 25,
+                                                              width: 25,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                valueColor:
+                                                                    AlwaysStoppedAnimation<
+                                                                            Color>(
+                                                                        Colors
+                                                                            .blueAccent),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : Container()
                                                 ],
                                               );
                                             }))

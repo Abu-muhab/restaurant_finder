@@ -69,6 +69,13 @@ class RestaurantTile extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
+              Text(
+                restaurant!.vicinity.toString(),
+                style: TextStyle(color: Colors.white, fontSize: 15),
+              ),
+              SizedBox(
+                height: 4,
+              ),
               StarRating(
                 rating: restaurant!.rating!,
               ),
