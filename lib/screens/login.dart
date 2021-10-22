@@ -117,12 +117,18 @@ class LoginScreen extends StatelessWidget {
                             style: TextStyle(
                                 color: Colors.blueGrey[400], fontSize: 15),
                           ),
-                          Text(
-                            "Register",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, "/signup");
+                            },
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),

@@ -20,7 +20,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   List<Restaurant>? restaurants;
 
-  bool fetching = false;
+  bool? fetching;
   bool fetchingNextPage = false;
 
   bool? permissionGranted;
@@ -149,8 +149,14 @@ class _NearbyScreenState extends State<NearbyScreen> {
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.login,color: Colors.white,),
-                  title: Text("Logout",style: TextStyle(color: Colors.white),),
+                  leading: Icon(
+                    Icons.login,
+                    color: Colors.white,
+                  ),
+                  title: Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onTap: () {
                     Provider.of<AuthProvider>(context, listen: false)
                         .logout()
@@ -272,125 +278,145 @@ class _NearbyScreenState extends State<NearbyScreen> {
                               height: 10,
                             ),
                             Expanded(
-                                child: restaurants == null && fetching == false
+                                child: fetching == null
                                     ? Center(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SvgPicture.asset(
-                                              "images/error.svg",
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 40,
-                                                  right: 40,
-                                                  bottom: 30,
-                                                  top: 30),
-                                              child: Text(
-                                                "Error fetching restaurants. Try again",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 30,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 40,
-                                            ),
-                                            ProgressButton(
-                                              height: 50,
-                                              width: 200,
-                                              text: "Reload",
-                                              onTap: () async {
-                                                await fetchRestaurants();
-                                              },
-                                            )
-                                          ],
+                                        child: SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  Colors.blueAccent),
+                                          strokeWidth: 3,
                                         ),
-                                      )
-                                    : restaurants == null && fetching == true
+                                      ))
+                                    : restaurants == null && fetching == false
                                         ? Center(
-                                            child: SizedBox(
-                                            height: 25,
-                                            width: 25,
-                                            child: CircularProgressIndicator(
-                                              valueColor:
-                                                  AlwaysStoppedAnimation<Color>(
-                                                      Colors.blueAccent),
-                                              strokeWidth: 3,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  "images/error.svg",
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.3,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 40,
+                                                      right: 40,
+                                                      bottom: 30,
+                                                      top: 30),
+                                                  child: Text(
+                                                    "Error fetching restaurants. Try again",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 30,
+                                                        color: Colors.white),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 40,
+                                                ),
+                                                ProgressButton(
+                                                  height: 50,
+                                                  width: 200,
+                                                  text: "Reload",
+                                                  onTap: () async {
+                                                    await fetchRestaurants();
+                                                  },
+                                                )
+                                              ],
                                             ),
-                                          ))
-                                        : RefreshIndicator(
-                                            onRefresh: () async {
-                                              await fetchRestaurants(
-                                                  isRefresh: true);
-                                            },
-                                            child: ListView.builder(
-                                                controller: scrollController,
-                                                physics:
-                                                    AlwaysScrollableScrollPhysics(),
-                                                itemCount: restaurants!.length,
-                                                itemBuilder: (context, count) {
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          "/restaurant_details",
-                                                          arguments:
-                                                              restaurants![
-                                                                  count]);
-                                                    },
-                                                    child: Column(
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        RestaurantTile(
-                                                          restaurant:
-                                                              restaurants![
-                                                                  count],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Divider(
-                                                          color: Colors
-                                                              .blueGrey[800],
-                                                        ),
-                                                        fetchingNextPage ==
-                                                                    true &&
-                                                                count ==
-                                                                    (restaurants!
-                                                                            .length -
-                                                                        1)
-                                                            ? Container(
-                                                                height: 40,
-                                                                child: Center(
-                                                                  child:
-                                                                      SizedBox(
-                                                                    height: 25,
-                                                                    width: 25,
+                                          )
+                                        : restaurants == null &&
+                                                fetching == true
+                                            ? Center(
+                                                child: SizedBox(
+                                                height: 25,
+                                                width: 25,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          Colors.blueAccent),
+                                                  strokeWidth: 3,
+                                                ),
+                                              ))
+                                            : RefreshIndicator(
+                                                onRefresh: () async {
+                                                  await fetchRestaurants(
+                                                      isRefresh: true);
+                                                },
+                                                child: ListView.builder(
+                                                    controller:
+                                                        scrollController,
+                                                    physics:
+                                                        AlwaysScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        restaurants!.length,
+                                                    itemBuilder:
+                                                        (context, count) {
+                                                      return InkWell(
+                                                        onTap: () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              "/restaurant_details",
+                                                              arguments:
+                                                                  restaurants![
+                                                                      count]);
+                                                        },
+                                                        child: Column(
+                                                          children: [
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            RestaurantTile(
+                                                              restaurant:
+                                                                  restaurants![
+                                                                      count],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Divider(
+                                                              color: Colors
+                                                                      .blueGrey[
+                                                                  800],
+                                                            ),
+                                                            fetchingNextPage ==
+                                                                        true &&
+                                                                    count ==
+                                                                        (restaurants!.length -
+                                                                            1)
+                                                                ? Container(
+                                                                    height: 40,
                                                                     child:
-                                                                        CircularProgressIndicator(
-                                                                      valueColor: AlwaysStoppedAnimation<
-                                                                              Color>(
-                                                                          Colors
-                                                                              .blueAccent),
+                                                                        Center(
+                                                                      child:
+                                                                          SizedBox(
+                                                                        height:
+                                                                            25,
+                                                                        width:
+                                                                            25,
+                                                                        child:
+                                                                            CircularProgressIndicator(
+                                                                          valueColor:
+                                                                              AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                                                                        ),
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            : Container()
-                                                      ],
-                                                    ),
-                                                  );
-                                                }),
-                                          ))
+                                                                  )
+                                                                : Container()
+                                                          ],
+                                                        ),
+                                                      );
+                                                    }),
+                                              ))
                           ],
                         ))
                 ],

@@ -105,16 +105,21 @@ class SignupScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Don't have an account? ",
+                            "Have an account? ",
                             style: TextStyle(
                                 color: Colors.blueGrey[400], fontSize: 15),
                           ),
-                          Text(
-                            "Register",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(context, "/login");
+                            },
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ],
                       ),
