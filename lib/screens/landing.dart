@@ -57,7 +57,9 @@ class LandingScreen extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.pushNamed(context, "/login");
+                                },
                                 child: Container(
                                   width: MediaQuery.of(context).size.width *
                                       0.7 /
@@ -77,7 +79,9 @@ class LandingScreen extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.pushNamed(context, "/signup");
+                              },
                               child: Container(
                                 height: 60,
                                 width:

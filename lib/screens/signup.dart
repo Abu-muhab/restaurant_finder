@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurantfinder/constants.dart';
 
-class LoginScreen extends StatelessWidget {
+class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
                         height: 30,
                       ),
                       Text(
-                        "Let's sign you in.",
+                        "Create an account",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 35,
@@ -47,15 +47,7 @@ class LoginScreen extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        "Welcome back.",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 25,
-                            color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        "You've been missed",
+                        "Find restaurants near you",
                         style: TextStyle(
                             fontWeight: FontWeight.w300,
                             fontSize: 25,
@@ -143,7 +135,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             child: Center(
                               child: Text(
-                                "Sign in",
+                                "Register",
                                 style: TextStyle(
                                     color: kPrimaryColor,
                                     fontWeight: FontWeight.bold),
