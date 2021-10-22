@@ -7,8 +7,9 @@ class ProgressButton extends StatefulWidget {
   final double height;
   final double width;
   final AsyncCallback? onTap;
+  final String text;
 
-  ProgressButton({this.height = 0, this.width = 0, this.onTap});
+  ProgressButton({this.height = 0, this.width = 0, this.onTap, this.text = ""});
 
   @override
   _ProgressButtonState createState() => _ProgressButtonState();
@@ -58,7 +59,7 @@ class _ProgressButtonState extends State<ProgressButton> {
                   ),
                 )
               : Text(
-                  "Register",
+                  widget.text,
                   style: TextStyle(
                       color: kPrimaryColor, fontWeight: FontWeight.bold),
                 ),

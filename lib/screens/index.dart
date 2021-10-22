@@ -27,7 +27,7 @@ class _IndexScreenState extends State<IndexScreen> {
                 body: Center(
                   child: ElevatedButton(
                     child: Text("Logout"),
-                    onPressed: (){
+                    onPressed: () {
                       FirebaseAuth.instance.signOut();
                     },
                   ),

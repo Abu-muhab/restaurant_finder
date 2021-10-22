@@ -1,7 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurantfinder/constants.dart';
+import 'package:restaurantfinder/providers/auth_provider.dart';
+import 'package:restaurantfinder/utils/util.dart';
+import 'package:restaurantfinder/widgets/custom_textfield.dart';
+import 'package:restaurantfinder/widgets/progress_button.dart';
 
 class LoginScreen extends StatelessWidget {
+  final GlobalKey<FormState> formKey = GlobalKey();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,48 +76,36 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(
                         height: 100,
                       ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Colors.blueGrey[500]!,
-                                width: 2,
-                              ),
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              controller: email,
+                              hintText: "email",
+                              validator: (val) {
+                                if (validateEmail(val!) == false) {
+                                  return "Enter a valid email";
+                                }
+                                return null;
+                              },
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide(
-                                color: Colors.blueAccent,
-                                width: 2,
-                              ),
+                            SizedBox(
+                              height: 20,
                             ),
-                            hintText: "email",
-                            hintStyle: TextStyle(color: Colors.grey[600])),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: Colors.blueGrey[500]!,
-                              width: 2,
+                            CustomTextField(
+                              controller: password,
+                              hintText: "password",
+                              obscureText: true,
+                              validator: (val) {
+                                if (val!.length <= 7) {
+                                  return "Password must be at least 7 characters long";
+                                }
+                                return null;
+                              },
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide(
-                              color: Colors.blueAccent,
-                              width: 2,
-                            ),
-                          ),
-                          hintText: "password",
-                          hintStyle: TextStyle(color: Colors.grey[600]),
+                          ],
                         ),
-                        obscureText: true,
                       ),
                       Expanded(child: Container()),
                       Row(
@@ -132,24 +131,26 @@ class LoginScreen extends StatelessWidget {
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: InkWell(
-                          onTap: () {},
-                          child: Container(
-                            height: 60,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Sign in",
-                                style: TextStyle(
-                                    color: kPrimaryColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
+                        child: ProgressButton(
+                          text: "Sign in",
+                          height: 60,
+                          width: double.infinity,
+                          onTap: () async {
+                            if (formKey.currentState!.validate()) {
+                              try {
+                                await Provider.of<AuthProvider>(context,
+                                        listen: false)
+                                    .login(email.text.trim(), password.text);
+                                Navigator.popUntil(
+                                    context, ModalRoute.withName('/'));
+                              } on SocketException catch (_) {
+                                showBasicMessageDialog(
+                                    "Check internet connection", context);
+                              } catch (err) {
+                                showBasicMessageDialog(err.toString(), context);
+                              }
+                            }
+                          },
                         ),
                       )
                     ],

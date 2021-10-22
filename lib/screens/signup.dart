@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/providers/auth_provider.dart';
 import 'package:restaurantfinder/utils/util.dart';
+import 'package:restaurantfinder/widgets/custom_textfield.dart';
 import 'package:restaurantfinder/widgets/progress_button.dart';
 
 class SignupScreen extends StatelessWidget {
@@ -71,7 +72,7 @@ class SignupScreen extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            TextFormField(
+                            CustomTextField(
                               controller: email,
                               validator: (val) {
                                 if (validateEmail(val!) == false) {
@@ -79,85 +80,21 @@ class SignupScreen extends StatelessWidget {
                                 }
                                 return null;
                               },
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide(
-                                      color: Colors.blueGrey[500]!,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide(
-                                      color: Colors.blueAccent,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  errorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  focusedErrorBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                    borderSide: BorderSide(
-                                      color: Colors.red,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  hintText: "email",
-                                  hintStyle:
-                                      TextStyle(color: Colors.grey[600])),
+                              hintText: "email",
                             ),
                             SizedBox(
                               height: 20,
                             ),
-                            TextFormField(
+                            CustomTextField(
                               controller: password,
                               validator: (val) {
-                                if (val!.length <= 6) {
-                                  return "Password too short";
+                                if (val!.length <= 7) {
+                                  return "Password must be at least 7 characters long";
                                 }
                                 return null;
                               },
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueGrey[500]!,
-                                    width: 2,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 2,
-                                  ),
-                                ),
-                                errorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide(
-                                    color: Colors.red,
-                                    width: 2,
-                                  ),
-                                ),
-                                focusedErrorBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                  borderSide: BorderSide(
-                                    color: Colors.red,
-                                    width: 2,
-                                  ),
-                                ),
-                                hintText: "password",
-                                hintStyle: TextStyle(color: Colors.grey[600]),
-                              ),
                               obscureText: true,
+                              hintText: "password",
                             ),
                           ],
                         ),
@@ -187,6 +124,7 @@ class SignupScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.center,
                         child: ProgressButton(
+                          text: "Register",
                           height: 60,
                           width: double.infinity,
                           onTap: () async {

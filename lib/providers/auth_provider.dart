@@ -20,4 +20,14 @@ class AuthProvider extends ChangeNotifier {
       throw err.message;
     });
   }
+
+  Future<UserCredential> login(String email, String password) async {
+    return FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((value) {
+      return value;
+    }).catchError((err) {
+      throw err.message;
+    });
+  }
 }
