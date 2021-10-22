@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         title: 'Nearby Restaurants',
         theme: Theme.of(context).copyWith(primaryColor: kPrimaryColor),
         routes: {
-          "/nearby": (context)=> NearbyScreen(),
+          "/nearby": (context) => NearbyScreen(),
           "/landing": (context) => LandingScreen(),
           "/login": (context) => LoginScreen(),
           "/signup": (context) => SignupScreen(),
