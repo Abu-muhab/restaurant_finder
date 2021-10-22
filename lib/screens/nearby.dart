@@ -17,7 +17,7 @@ class NearbyScreen extends StatefulWidget {
 class _NearbyScreenState extends State<NearbyScreen> {
   List<Restaurant>? restaurants;
 
-  bool fetching = false;
+  bool fetching = true;
   bool? permissionGranted;
 
   Location location = new Location();
@@ -26,11 +26,35 @@ class _NearbyScreenState extends State<NearbyScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {});
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      requestLocationPermission().then((value) {
+        setState(() {
+          permissionGranted = value;
+        });
+        if (value) {
+          listenForUserLocation();
+        }
+      });
+    });
   }
 
-  void fetchRestaurants() async {
-    // PlaceApi.getNearbyRestaurants(userLocation)
+  Future<void> fetchRestaurants() async {
+    try {
+      setState(() {
+        fetching = true;
+      });
+      List<Restaurant> restaurants =
+          await PlaceApi.getNearbyRestaurants(userLocation!);
+      setState(() {
+        this.restaurants = restaurants;
+        fetching = false;
+      });
+    } catch (err) {
+      print(err.toString());
+      setState(() {
+        fetching = false;
+      });
+    }
   }
 
   Future<bool> requestLocationPermission() async {
@@ -59,6 +83,7 @@ class _NearbyScreenState extends State<NearbyScreen> {
     LocationData _locationData;
     _locationData = await location.getLocation();
     userLocation = LatLng(_locationData.latitude!, _locationData.longitude!);
+    fetchRestaurants();
     location.onLocationChanged.listen((LocationData currentLocation) {
       userLocation =
           LatLng(currentLocation.latitude!, currentLocation.longitude!);
@@ -109,63 +134,131 @@ class _NearbyScreenState extends State<NearbyScreen> {
                     height: 20,
                   ),
                   permissionGranted == null
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SvgPicture.asset(
-                                "images/restaurant.svg",
-                                height:
-                                    MediaQuery.of(context).size.height * 0.4,
+                      ? Container()
+                      : permissionGranted == false
+                          ? Expanded(
+                              child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SvgPicture.asset(
+                                    "images/restaurant.svg",
+                                    height: MediaQuery.of(context).size.height *
+                                        0.3,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 40,
+                                        right: 40,
+                                        bottom: 30,
+                                        top: 30),
+                                    child: Text(
+                                      "Grant location permission to continue",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 30,
+                                          color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 40,
+                                  ),
+                                  ProgressButton(
+                                    height: 50,
+                                    width: 200,
+                                    text: "Grant permission",
+                                    onTap: () async {
+                                      bool accepted =
+                                          await requestLocationPermission();
+                                      setState(() {
+                                        permissionGranted = accepted;
+                                      });
+                                      if (accepted) {
+                                        await listenForUserLocation();
+                                      }
+                                    },
+                                  )
+                                ],
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    left: 40, right: 40, bottom: 30, top: 30),
-                                child: Text(
-                                  "Grant location permission to continue",
+                            ))
+                          : Expanded(
+                              child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Restaurants near you",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 30,
                                       color: Colors.white),
                                   textAlign: TextAlign.center,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              ProgressButton(
-                                height: 50,
-                                width: 200,
-                                text: "Grant permission",
-                                onTap: () async {
-                                  bool accepted =
-                                      await requestLocationPermission();
-                                  if (accepted) {
-                                    await listenForUserLocation();
-                                  }
-                                },
-                              )
-                            ],
-                          ),
-                        )
-                      : Expanded(
-                          child: Column(
-                          children: [
-                            Text(
-                              "Restaurants near you",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
-                            Expanded(
-                                child: restaurants==null&&fetching==false?:ListView(
-                              padding: EdgeInsets.zero,
-                              children: [RestaurantTile()],
+                                Expanded(
+                                    child: restaurants == null &&
+                                            fetching == false
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                SvgPicture.asset(
+                                                  "images/error.svg",
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.3,
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 40,
+                                                      right: 40,
+                                                      bottom: 30,
+                                                      top: 30),
+                                                  child: Text(
+                                                    "Error fetching restaurants. Try again",
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 30,
+                                                        color: Colors.white),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 40,
+                                                ),
+                                                ProgressButton(
+                                                  height: 50,
+                                                  width: 200,
+                                                  text: "Reload",
+                                                  onTap: () async {
+                                                    await fetchRestaurants();
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        : restaurants == null &&
+                                                fetching == true
+                                            ? Center(
+                                                child: SizedBox(
+                                                height: 25,
+                                                width: 25,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                              Color>(
+                                                          Colors.blueAccent),
+                                                  strokeWidth: 3,
+                                                ),
+                                              ))
+                                            : ListView(
+                                                padding: EdgeInsets.zero,
+                                                children: [RestaurantTile()],
+                                              ))
+                              ],
                             ))
-                          ],
-                        ))
                 ],
               ),
             ),
