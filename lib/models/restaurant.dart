@@ -23,12 +23,16 @@ class Restaurant {
         location: LatLng(json['geometry']['location']['lat'],
             json['geometry']['location']['lng']),
         name: json['name'],
-        isOpen: json['opening_hours']['open_now'],
-        photoReference: json['photos'].length == 0
+        isOpen: json['opening_hours'] == null
+            ? null
+            : json['opening_hours']['open_now'],
+        photoReference: json['photos'] == null || json['photos'].length == 0
             ? null
             : json['photos'][0]['photo_reference'],
         placeId: json['place_id'],
-        rating: json['rating'],
+        rating: json['rating'] == null
+            ? 0
+            : double.parse(json['rating'].toString()),
         vicinity: json['vicinity']);
   }
 }

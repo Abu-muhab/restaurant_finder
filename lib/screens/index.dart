@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantfinder/providers/auth_provider.dart';
 import 'package:restaurantfinder/screens/landing.dart';
+import 'package:restaurantfinder/screens/nearby.dart';
 
 class IndexScreen extends StatefulWidget {
   @override
@@ -23,16 +24,7 @@ class _IndexScreenState extends State<IndexScreen> {
               if (authProvider.user == null) {
                 return LandingScreen();
               }
-              return Scaffold(
-                body: Center(
-                  child: ElevatedButton(
-                    child: Text("Logout"),
-                    onPressed: () {
-                      FirebaseAuth.instance.signOut();
-                    },
-                  ),
-                ),
-              );
+              return NearbyScreen();
             },
           );
         }

@@ -32,6 +32,6 @@ class MyApp extends StatelessWidget {
           "/signup": (context) => SignupScreen(),
           "/": (context) => IndexScreen()
         },
-        initialRoute: "/nearby");
+        initialRoute: "/");
   }
 }
