@@ -21,7 +21,7 @@ class LandingScreen extends StatelessWidget {
                 padding:
                     EdgeInsets.only(left: 70, right: 70, bottom: 30, top: 30),
                 child: Text(
-                  "Find restaurant's near your",
+                  "Find restaurants near your",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,

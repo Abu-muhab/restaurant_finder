@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/providers/auth_provider.dart';
@@ -20,7 +21,8 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Firebase.initializeApp();
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Nearby Restaurants',
