@@ -107,7 +107,17 @@ class RestaurantTile extends StatelessWidget {
                       : "Open",
                   style: TextStyle(color: Colors.white),
                 ),
-                backgroundColor: Colors.green,
+                backgroundColor:
+                    restaurant!.isOpen == null || restaurant!.isOpen == false
+                        ? Colors.redAccent
+                        : Colors.green,
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Colors.white,
+                ),
               )
             ],
           ))

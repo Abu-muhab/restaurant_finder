@@ -30,4 +30,8 @@ class AuthProvider extends ChangeNotifier {
       throw err.message;
     });
   }
+
+  Future<void> logout() async{
+    await FirebaseAuth.instance.signOut();
+  }
 }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurantfinder/api/place_api.dart';
 import 'package:restaurantfinder/constants.dart';
 import 'package:restaurantfinder/models/restaurant.dart';
+import 'package:restaurantfinder/providers/auth_provider.dart';
 import 'package:restaurantfinder/widgets/custom_textfield.dart';
 import 'package:restaurantfinder/widgets/progress_button.dart';
 import 'package:restaurantfinder/widgets/restaurant_tile.dart';
@@ -15,6 +17,7 @@ class NearbyScreen extends StatefulWidget {
 }
 
 class _NearbyScreenState extends State<NearbyScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   List<Restaurant>? restaurants;
 
   bool fetching = false;
@@ -139,6 +142,31 @@ class _NearbyScreenState extends State<NearbyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Container(
+          color: kPrimaryColor,
+          child: SafeArea(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.login,color: Colors.white,),
+                  title: Text("Logout",style: TextStyle(color: Colors.white),),
+                  onTap: () {
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .logout()
+                        .then((value) {
+                      if (Navigator.canPop(context)) {
+                        Navigator.popUntil(context, ModalRoute.withName('/'));
+                      }
+                    });
+                  },
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      key: scaffoldKey,
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -155,16 +183,21 @@ class _NearbyScreenState extends State<NearbyScreen> {
                   Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Container(
-                        height: 60,
-                        width: 60,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            color: kPrimaryColorLight,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Icon(
-                          Icons.menu,
-                          color: Colors.white,
+                      InkWell(
+                        onTap: () {
+                          scaffoldKey.currentState!.openDrawer();
+                        },
+                        child: Container(
+                          height: 60,
+                          width: 60,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: kPrimaryColorLight,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(
