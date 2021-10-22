@@ -8,6 +8,25 @@ import 'package:restaurantfinder/models/restaurant.dart';
 class PlaceApi {
   static String baseUrl = "https://maps.googleapis.com/maps/api/place";
   static String apiKey = "AIzaSyB_rPr66VTngzCveTyuIed5C_Rs3CAApfE";
+
+  static Future<RestaurantDetails> getRestaurantDetails(String placeId) async {
+    try {
+      http.Response response = await http.get(Uri.parse(baseUrl +
+          "/details/json?place_id=$placeId&key=$apiKey&fields=photos,reviews"));
+
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        Map result = JsonDecoder().convert(response.body)['result'];
+        return RestaurantDetails.fromJson(result);
+      } else {
+        throw "Error fetching details";
+      }
+    } on SocketException catch (_) {
+      throw "No internet connection";
+    }
+  }
+
   static Future<NearbyRestaurantResponse> getNearbyRestaurants(
       LatLng userLocation,
       {String? pageToken}) async {

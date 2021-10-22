@@ -1,4 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:restaurantfinder/models/review.dart';
 
 class Restaurant {
   String? name;
@@ -39,5 +40,32 @@ class Restaurant {
         totalUserRating: json['user_ratings_total'] == null
             ? 0
             : json['user_ratings_total']);
+  }
+}
+
+class RestaurantDetails {
+  List<String> photoReferences;
+  List<Review> reviews;
+
+  RestaurantDetails({this.photoReferences = const [], this.reviews = const []});
+
+  factory RestaurantDetails.fromJson(Map json) {
+    List<String> refs = [];
+    if (json['photos'] != null) {
+      List photos = json['photos'];
+      photos.forEach((element) {
+        refs.add(element['photo_reference']);
+      });
+    }
+
+    List<Review> reviews = [];
+    if (json['reviews'] != null) {
+      List photos = json['reviews'];
+      photos.forEach((element) {
+        reviews.add(Review.fromJson(element));
+      });
+    }
+
+    return RestaurantDetails(photoReferences: refs, reviews: reviews);
   }
 }
